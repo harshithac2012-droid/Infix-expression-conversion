@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infix Expression Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #0f0f1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1.125rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            color: #ffffff;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        input[type="text"]::placeholder {
+            color: #6b7280;
+        }
+
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+            appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        select option {
+            background: #1e1e2e;
+            color: #ffffff;
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            pointer-events: none;
+            font-size: 0.75rem;
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-container {
+            margin-top: 2rem;
+        }
+
+        .result-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            min-height: 100px;
+            color: #ffffff;
+            font-size: 1.125rem;
+            word-break: break-word;
+        }
+
+        .result-box.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+        }
+
+        .result-box.success {
+            border-color: #7c3aed;
+            background: rgba(124, 58, 237, 0.1);
+            color: #c4b5fd;
+        }
+
+        .result-box:empty::before {
+            content: 'Your converted expression will appear here...';
+            color: #6b7280;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Infix Expression Converter</h1>
+        <p class="subtitle">Convert an infix expression to either prefix or postfix notation.</p>
+
+        <form id="converterForm">
+            <div class="grid">
+                <div class="form-group">
+                    <label for="infixInput">Infix Expression</label>
+                    <input 
+                        type="text" 
+                        id="infixInput" 
+                        name="infix" 
+                        placeholder="Enter an infix expression"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="conversionType">Conversion Type</label>
+                    <div class="select-wrapper">
+                        <select id="conversionType" name="type">
+                            <option value="prefix">Prefix</option>
+                            <option value="postfix">Postfix</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="convert-btn">Convert</button>
+        </form>
+
+        <div class="result-container">
+            <label>Result</label>
+            <div id="result" class="result-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('converterForm');
+        const resultBox = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const infix = document.getElementById('infixInput').value.trim();
+            const type = document.getElementById('conversionType').value;
+
+            if (!infix) {
+                showError('Please enter an infix expression');
+                return;
+            }
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ infix, type })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.result);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError('Failed to connect to server. Make sure Flask is running.');
+            }
+        });
+
+        function showSuccess(message) {
+            resultBox.textContent = message;
+            resultBox.className = 'result-box success';
+        }
+
+        function showError(message) {
+            resultBox.textContent = message;
+            resultBox.className = 'result-box error';
+        }
+    </script>
+</body>
+</html>
